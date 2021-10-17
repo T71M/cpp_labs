@@ -29,7 +29,10 @@ void Player:: setBet(int bet){
 
 void Player:: setUpSecondHand(){
     GameCard temp;
+    GameCard one;
+    one.setValue((*firstHand)[0]);
     temp.setValue((*firstHand)[1]);
+    if(one.getValue() == temp.getValue()) isSplit = true;
     secondHand = new Deck(temp);
     firstHand->deleteCard(1);
 }

@@ -55,10 +55,15 @@ void Game:: defaultGame(){
                     show = true;
                     dealer -> endGame( *getRandDeck(), split );
                 } else if(choose == 2){
-                    split = true;
-                    player -> setUpSecondHand();
-                    dealer -> setUpSecondHand( *(getRandDeck()) );
-                    break;
+                    if(player->isSplit){
+                        split = true;
+                        player -> setUpSecondHand();
+                        dealer -> setUpSecondHand( *(getRandDeck()) );
+                        break;
+                    } else{
+                        continue;
+                    }
+                    
                 }
             } else {
                 int choose;
@@ -133,6 +138,7 @@ void Game:: splitGame(){
                 cout << firstStep << endl << secondStep  << endl;
                 cin >> choose;
                 if(choose == 1){
+                    if(firstHandLose) continue;
                     player -> getCardFirstHand(dealer -> getRandCard(*getRandDeck()));
                     int a = player -> calculatePoints(player->firstHand);
                     if(a == -1){
@@ -140,6 +146,7 @@ void Game:: splitGame(){
                         throw 1;
                     }
                 } else if(choose == 2){
+                    if(secondHandLose) continue;
                     player -> getCardSecondHand(dealer -> getRandCard(*getRandDeck()));
                     int a = player -> calculatePoints(player->firstHand);
                     if(a == -1){
@@ -154,6 +161,7 @@ void Game:: splitGame(){
                 cout  << firstStep << endl << secondStep  << endl << "3. Хватит "<< endl;
                 cin >> choose;
                 if(choose == 1){
+                    if(firstHandLose) continue;
                     player -> getCardFirstHand(dealer -> getRandCard(*getRandDeck()));
                     int a = player -> calculatePoints(player->firstHand);
                     if(a == -1){
@@ -166,6 +174,7 @@ void Game:: splitGame(){
                     dealer -> endGame( *getRandDeck(), split);
                     continue;
                 } else if(choose == 2){
+                    if(secondHandLose) continue;
                     player -> getCardSecondHand(dealer -> getRandCard(*getRandDeck()) );
                     int a = player -> calculatePoints(player->secondHand);
                     if(a == -1){
@@ -182,6 +191,7 @@ void Game:: splitGame(){
                 cout << firstStep << endl << secondStep << endl <<  "3.Хватит" << endl;
                 cin >> choose;
                 if(choose == 1){
+                    if(secondHandLose) continue;
                     player -> getCardFirstHand(dealer -> getRandCard(*getRandDeck()));
                     int a = player -> calculatePoints(player->firstHand);
                     if(a == -1){
@@ -189,6 +199,7 @@ void Game:: splitGame(){
                         throw 1;
                     }
                 } else if (choose == 2){
+                    if(secondHandLose) continue;
                     player -> getCardSecondHand(dealer -> getRandCard(*getRandDeck()));
                     int a = player -> calculatePoints(player->secondHand);
                     if(a == -1){
@@ -206,12 +217,14 @@ void Game:: splitGame(){
             ++cntSteps;
             cout << endl << endl << endl;
         }catch(int){
-            cout << "Перебор в 1 руке!";
             cout << endl << endl << endl;
+            cout << "Перебор в 1 руке!";
+            
             continue;
         }catch(double){
-            cout << "Перебор вo 2 руке!";
             cout << endl << endl << endl;
+            cout << "Перебор вo 2 руке!";
+            
             continue;
         }
         
@@ -269,7 +282,11 @@ void Game:: printSplitGameStats(){
 void Game:: calculateWinner(){
     int playerPoints = player -> calculatePoints(player -> firstHand);
     int dealerPoints = dealer -> calculatePoints(dealer -> firstHand);
-    if(dealerPoints == 1) throw true;
+    if(dealerPoints == 1 && playerPoints == 1) {
+        cout << "Ничья!" << endl;
+        return;
+    }
+   else if(dealerPoints == 1) throw true;
     if (dealerPoints == -1) throw 1.1;
     else if(playerPoints == 1){
         throw 'A';
@@ -356,12 +373,12 @@ void Game:: calculateWinnerSplit(){
             cout << "Всего: " << player -> getBet();
         }
         else {
-            cout << "1 Ваша игра сыграла в ничью! Ваша ставка остается при Вас!";
+            cout << "1 Ваша рука сыграла в ничью или выиграла! Ваша ставка остается при Вас!";
         }
     }
     else if (!playerFirstHandWin && !playerSecondHandWin ){
         if(!dealerFirstHandWin || !dealerSecondHandWin){
-            cout << "1 Ваша рука сыграла в ничью! Ваша ставка остается при Вас!";
+            cout << "1 Ваша рука сыграла в ничью или выиграла! Ваша ставка остается при Вас!";
         }else{
             cout << "Вы проиграли! Ваш проигрыш: " << player -> getBet();
         }
