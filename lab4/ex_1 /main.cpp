@@ -10,6 +10,8 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
+    setlocale(LC_ALL, "Russian"); 
+    
     Game* game = new Game;
     game -> gameProcess();
     delete game;
